@@ -5,8 +5,8 @@ import { sendEmail } from "../util/sendEmail.js";
 
 export const register = async (req, res) => {
   const { 
-      firstName,
-       lastName, 
+      firstname,
+       lastname, 
        email, 
        password,
        phone,
@@ -29,8 +29,8 @@ export const register = async (req, res) => {
   }
   try {
     const user = await User.create({
-      firstName,
-      lastName,
+      firstname,
+      lastname,
       email,
       password,
       phone,

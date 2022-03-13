@@ -21,23 +21,23 @@ app.use('/api/v1/auth',auth_routes)
 
 
 app.get('/',(req,res) =>{
-    console.log("Hey there Action hands backend  is up and running")
+    console.log("final year backend")
     res.json({
-        success:"lets Donate",
-        token:"donate xxx"
+        success:"DPMS",
+        token:"MedAcess"
     })
 })
 
 app.post('/',(req,res) =>{
-    console.log("Post  to Action Hands")
+    console.log("Post  MedAcess")
    //processorEngine()
-    console.log("...........................................................................")
+    console.log("..........................................................")
     //console.log(req)
     console.log(req.body)
     
     res.json({
-        success:"lets Donate",
-        token:"donate xxx"
+        success:"medAcess",
+        token:"MedAcess"
     })
 })
 
@@ -49,7 +49,6 @@ try {
 } catch (error) {
     console.log("Something went Wrong .. Shutting down the server ....")
     process.exit(1)
-    
 }
 
 

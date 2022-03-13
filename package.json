@@ -9,13 +9,8 @@
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  
   "author": "David",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/dzzirima/kamili_backend/issues"
-  },
-  "homepage": "https://github.com/dzzirima/kamili_backend#readme",
   "dependencies": {
     "@sendgrid/mail": "^7.6.0",
     "axios": "^0.24.0",
@@ -30,5 +25,13 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.14"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dzzirima/final_year_backent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dzzirima/final_year_backent/issues"
+  },
+  "homepage": "https://github.com/dzzirima/final_year_backent#readme"
 }

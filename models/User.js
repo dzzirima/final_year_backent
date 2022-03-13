@@ -2,11 +2,11 @@ import mongoose from 'mongoose'
 
 
 const UserSchema = new mongoose.Schema({
-    firstName:{
+    firstname:{
         type:String,
         required:[true,"Please provide the username"]
     },
-    lastName:{
+    lastname:{
         type:String,
         required:[true,"Please provide the username"]
     },
