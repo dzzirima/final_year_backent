@@ -1,5 +1,5 @@
 import express from 'express'
-import { createRecord, deleteRecord, getAllUserRecords, getRecord, updateRecord } from '../controllers/Prescription.js'
+import { createRecord, deleteRecord, getAllUserRecords, getRecord, permisions, updateRecord } from '../controllers/Prescription.js'
 const Router = express.Router()
 
 import {verify_user} from '../middleware/auth.js'
@@ -18,7 +18,8 @@ Router.route('/getRecord').get(getRecord)
 Router.route('/getAllUserRecords').get(verify_user, getAllUserRecords)
 
 
-// only the admin can do this
+/** permision to the records */
+Router.route('/permisions').post(verify_user,permisions)
 
 
 
