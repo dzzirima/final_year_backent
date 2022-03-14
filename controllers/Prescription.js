@@ -100,19 +100,43 @@ export const updateRecord = async (req, res) => {
 };
 
 export const deleteRecord = async (req, res) => {
-  let { _id } = req.query;
+  let { _id } = req.body;
+  let canDelete = false;
+
+  if (!_id) {
+    return res.status(404).json({
+      success: false,
+      message: "Please specify the recordId ie _id",
+    });
+  }
+  /**check if the user is the owner of the record */
 
   try {
-    await Prescription.findByIdAndDelete({ _id });
-    return res.json({
-      success: true,
-      message: "Record was deleted successfully",
-    });
+    let foundRecord = await Prescription.findById(_id);
+    canDelete =
+      foundRecord.patientId === req.user._id.toString() ? true : false;
+
+    if (canDelete) {
+      await Prescription.findByIdAndDelete({ _id });
+      return res.json({
+        success: true,
+        message: "Record was deleted successfully",
+      });
+    }
+
+    return res.status(402).json({
+      success:false,
+      message:"Make sure you have you are the onwner of the document"
+    })
   } catch (error) {
+    let wrongIdFormat = `${error.message}`.startsWith("Cast to ObjectId")
+      ? true
+      : false;
+
     return res.json({
       success: false,
       message: "failed to delete Record",
-      error: error.message,
+      error: wrongIdFormat ? "Provide correct record _id" : `${error.message}`,
     });
   }
 };
@@ -125,7 +149,7 @@ export const getRecord = async (req, res) => {
   let owner = false;
   let hasAccessRights = false;
 
-  const { recordId, prescriberId } = req.body;
+  const { recordId } = req.body;
   if (!recordId) {
     return res.status(404).json({
       success: false,
@@ -163,9 +187,9 @@ export const getRecord = async (req, res) => {
     }
 
     return res.status(405).json({
-      success:false,
-      message:"Make sure you  have access to the file you want to access"
-    })
+      success: false,
+      message: "Make sure you  have access to the file you want to access",
+    });
   } catch (error) {
     return res.status(401).json({
       success: false,
