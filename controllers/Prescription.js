@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import { nanoid } from "nanoid";
 import { get_signed_token } from "../util/getsingedtoken.js";
 import { sendEmail } from "../util/sendEmail.js";
+import { ROLES } from "../util/Roles.js";
 
 export const createRecord = async (req, res) => {
   const {
@@ -199,13 +200,33 @@ export const getRecord = async (req, res) => {
 };
 
 export const getAllUserRecords = async (req, res) => {
+
+  /**
+   * 1.A user gets all his/her records
+   * 2.Other requestors need to have access rights for them to access the records
+   * N.B checking is done role based
+   * 
+   */
+  let isOwner = req.user.role === ROLES.PATIENT ?true:false
+  let foundRecords
+
   try {
-    let foundRecords = await Prescription.find({});
+
+    if(isOwner){
+      foundRecords = await Prescription.find({patientId:(req.user._id).toString()});
+
+    }else{
+      foundRecords = await Prescription.find({
+        accessors:(req.user._id).toString()
+
+      })
+    }
     return res.json({
       success: true,
       message: "user records found",
       data: {
-        users: foundRecords,
+        length:foundRecords.length,
+        records: foundRecords,
       },
     });
   } catch (error) {

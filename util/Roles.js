@@ -1,5 +1,8 @@
 export const ROLES = {
     ADMIN:'ADMIN',
+    PATIENT:'PATIENT',
+    DOCTOR:'DOCTOR',
+    PHARMACIST:'PHARMACIST'
 }
 
 export const FUNDRAISESTATE = {
