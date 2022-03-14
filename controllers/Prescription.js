@@ -64,8 +64,14 @@ export const createRecord = async (req, res) => {
 };
 
 export const updateRecord = async (req, res) => {
+  /**
+   *1.the prescriber who currently has access  to the record can update the record
+   */
+
+  let canUpDate = false;
+
   const {
-    _id,
+    recordId,
     patientId,
     phamasistId,
     doctorId,
@@ -75,23 +81,39 @@ export const updateRecord = async (req, res) => {
   } = req.body;
 
   try {
-    await Prescription.findByIdAndUpdate(
-      { _id },
-      {
-        $set: {
-          patientId,
-          phamasistId,
-          doctorId,
-          quantityPrescribed,
-          drugDescription,
-          drugImageURL,
-        },
-      }
-    );
-    return res.json({
-      success: true,
-      message: "Record was  Updated SuccessFully !!!",
-    });
+    let foundRecord = await Prescription.findOne({ recordId });
+    /**check if the prescriber currently has access to record */
+    canUpDate =
+      foundRecord.accessors.indexOf(req.user._id.toString()) >= 0
+        ? true
+        : false;
+
+    if (canUpDate) {
+      await Prescription.findOneAndUpdate(
+        {recordId },
+        {
+          $set: {
+            patientId,
+            phamasistId,
+            doctorId,
+            quantityPrescribed,
+            drugDescription,
+            drugImageURL,
+          },
+        }
+      );
+      return res.json({
+        success: true,
+        message: "Record was  Updated SuccessFully !!!",
+      });
+    }
+
+
+    return res.status(301).json({
+      success:false,
+      message:'Make sure u have access rights to that record'
+    })
+    
   } catch (error) {
     return res.json({
       success: false,
@@ -126,9 +148,9 @@ export const deleteRecord = async (req, res) => {
     }
 
     return res.status(402).json({
-      success:false,
-      message:"Make sure you have you are the onwner of the document"
-    })
+      success: false,
+      message: "Make sure you have you are the onwner of the document",
+    });
   } catch (error) {
     let wrongIdFormat = `${error.message}`.startsWith("Cast to ObjectId")
       ? true
@@ -200,32 +222,30 @@ export const getRecord = async (req, res) => {
 };
 
 export const getAllUserRecords = async (req, res) => {
-
   /**
    * 1.A user gets all his/her records
    * 2.Other requestors need to have access rights for them to access the records
    * N.B checking is done role based
-   * 
+   *
    */
-  let isOwner = req.user.role === ROLES.PATIENT ?true:false
-  let foundRecords
+  let isOwner = req.user.role === ROLES.PATIENT ? true : false;
+  let foundRecords;
 
   try {
-
-    if(isOwner){
-      foundRecords = await Prescription.find({patientId:(req.user._id).toString()});
-
-    }else{
+    if (isOwner) {
       foundRecords = await Prescription.find({
-        accessors:(req.user._id).toString()
-
-      })
+        patientId: req.user._id.toString(),
+      });
+    } else {
+      foundRecords = await Prescription.find({
+        accessors: req.user._id.toString(),
+      });
     }
     return res.json({
       success: true,
       message: "user records found",
       data: {
-        length:foundRecords.length,
+        length: foundRecords.length,
         records: foundRecords,
       },
     });

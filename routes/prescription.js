@@ -8,7 +8,7 @@ import { ROLES } from '../util/Roles.js'
 
 
 Router.route('/createRecord').post(createRecord)
-Router.route('/updateRecord').post(updateRecord)
+Router.route('/updateRecord').post( verify_user,updateRecord)
 
 /**The patient should delete their records */
 Router.route('/deleteRecord').delete(verify_user, deleteRecord)
