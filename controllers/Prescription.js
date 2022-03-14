@@ -118,29 +118,56 @@ export const deleteRecord = async (req, res) => {
 };
 
 export const getRecord = async (req, res) => {
-  let foundRecord;
+  /**
+   * 1.Owner of the record should be able to retrive their records
+   * 2.A prescriber with access rights should get the records
+   */
+  let owner = false;
+  let hasAccessRights = false;
 
-  try {
-    foundRecord = await Prescription.findOne({
-      recordId: req.body.recordId,
+  const { recordId, prescriberId } = req.body;
+  if (!recordId) {
+    return res.status(404).json({
+      success: false,
+      message: "Please specify the recordId and prescriberId",
     });
+  }
+  try {
+    let foundRecord = await Prescription.findOne({ recordId: recordId });
 
-    if (!foundRecord) {
-      return res.json({
+    if (!foundRecord)
+      res.status(404).json({
         success: false,
-        message: "No record found",
+        message: "No record found !!!! ",
+      });
+
+    /**check if the requestor is the patient */
+    owner = foundRecord.patientId === req.user._id.toString() ? true : false;
+
+    /**check it the prescriber has rights */
+    hasAccessRights =
+      foundRecord.accessors.indexOf(req.user._id.toString()) >= 0
+        ? true
+        : false;
+
+    /**return the record if any of the 2  above conditions are satisfied */
+
+    if (owner || hasAccessRights) {
+      return res.status(200).json({
+        success: true,
+        data: {
+          record: foundRecord,
+        },
+        message: "Prescriber added to view list",
       });
     }
 
-    return res.json({
-      success: true,
-      message: "user record",
-      data: {
-        record: foundRecord,
-      },
-    });
+    return res.status(405).json({
+      success:false,
+      message:"Make sure you  have access to the file you want to access"
+    })
   } catch (error) {
-    return res.json({
+    return res.status(401).json({
       success: false,
       message: `${error.message}`,
     });
@@ -196,26 +223,23 @@ export const permisions = async (req, res) => {
       });
     }
     if (!foundRecord || !foundPrescriber)
-      res
-        .status(404)
-        .json({
-          success: false,
-          message: "No record  or presciber found...!! ",
-        });
+      res.status(404).json({
+        success: false,
+        message: "No record  or presciber found...!! ",
+      });
 
     /**if revoke is set to true , then remove the prescribers id from the list */
 
-    if(revoke){
-        let updatedRecord = await Prescription.updateOne(
-            { recordId: recordId },
-            { $pull: { accessors: prescriberId } }
-          );
+    if (revoke) {
+      let updatedRecord = await Prescription.updateOne(
+        { recordId: recordId },
+        { $pull: { accessors: prescriberId } }
+      );
 
-          return res.status(200).json({
-            success: true,
-            message: "Prescriber was successfully removed from view list",
-          });
-        
+      return res.status(200).json({
+        success: true,
+        message: "Prescriber was successfully removed from view list",
+      });
     }
 
     /**Add the doctors or phamacist id into an array */

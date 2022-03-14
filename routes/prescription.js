@@ -12,7 +12,7 @@ Router.route('/updateRecord').post(updateRecord)
 
 /**The patient should delete their records */
 Router.route('/deleteRecord').delete(verify_user, deleteRecord)
-Router.route('/getRecord').get(getRecord)
+Router.route('/getRecord').get(verify_user, getRecord)
 
 /**A user or a doctor can get the  records  */
 Router.route('/getAllUserRecords').get(verify_user, getAllUserRecords)
