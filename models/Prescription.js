@@ -28,7 +28,7 @@ const PrescriptionSchema = new mongoose.Schema({
     accessors:{
         type:Array
     }
-});
+},{timestamps:true});
 
 const Prescription = mongoose.model("Prescription",PrescriptionSchema)
 
