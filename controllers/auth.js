@@ -51,7 +51,7 @@ export const register = async (req, res) => {
   } catch (error) {
       console.log(error)
       res.json({
-          success:"false",
+          success:false,
           "message":error.message
       }).status(201);
       return
@@ -66,7 +66,7 @@ export const login = async (req,res) =>{
     
     if(!email && !password){
         res.json({
-            "success":"false",
+            "success":false,
             "message":"please provide email and password"
         }).status(404)
         return;
@@ -78,7 +78,7 @@ export const login = async (req,res) =>{
         // check if the user exist
         if(!user){
             res.json({
-                "success":"false",
+                "success":false,
                 "message":"User with that details not found"
             }).status(401)
             return;
@@ -86,7 +86,7 @@ export const login = async (req,res) =>{
         // check if the passsword match
         if(user.password != password){
             res.json({
-                "success":"false",
+                "success":false,
                 "message":"Provide correct password"
             }).status(401)
             return;
@@ -95,10 +95,10 @@ export const login = async (req,res) =>{
         }
        
         res.json({
-            "success":"true",
+            "success":true,
             message:"successfuly loged in",
             data:{
-                "token":await get_signed_token(user),
+                token:await get_signed_token(user),
                 user:user
             }
             
@@ -108,7 +108,7 @@ export const login = async (req,res) =>{
     } catch (error) {
         console.log(error)
         res.json({
-            "success":"false",
+            "success":false,
             "message":error.message
 
         });
