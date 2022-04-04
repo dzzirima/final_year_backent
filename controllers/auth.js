@@ -2,6 +2,7 @@
 import User from "../models/User.js";
 import { get_signed_token } from "../util/getsingedtoken.js";
 import { sendEmail } from "../util/sendEmail.js";
+import { getAccessors } from "./blockchain.js";
 
 export const register = async (req, res) => {
   const { 
@@ -215,18 +216,25 @@ export const getUser = async (req,res) =>{
 }
 
 export const getAllUsers = async (req,res) =>{
+
+
+
     
     try {
         let foundUsers = await User.find({
             
         })
-        return res.json({
-            success:true,
-            message:'user found',
-            data:{
-                users:foundUsers
-            }
-        })
+
+        getAccessors(req,res)
+        // return res.json({
+        //     success:true,
+        //     message:'user found',
+        //     data:{
+        //         users:foundUsers
+        //     }
+        // })
+
+
     } catch (error) {
         return res.json({
             success:false,

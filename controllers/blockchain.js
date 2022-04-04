@@ -15,7 +15,7 @@ const signer = provider.getSigner(1)
 let abi= medAcessABI.abi;
 
 
-let prescriptionContract = new ethers.Contract("0x0165878A594ca255338adfa4d48449f69242Eb8F",abi,provider)
+let prescriptionContract = new ethers.Contract("0x5FbDB2315678afecb367f032d93F642f64180aa3",abi,provider)
 
 export const testConnection = async () => {
   // Look up the current block number
@@ -33,13 +33,21 @@ export const testConnection = async () => {
   }
 };
 
-export const readBlockchain = async () =>{
+export const getAccessors = async (req,res) =>{
   try {
-    let contractName = await  prescriptionContract.getAccessors()
-    console.log(contractName)
+    let accessors = await  prescriptionContract.getAccessors()
+    res.status(200).json({
+      success:true,
+      accessors:accessors,
+    })
   } catch (error) {
+
+    res.status(501).json({
+      success:false,
+      message:error.message
+    })
     console.log(error.message)
   }
 }
 
-readBlockchain()
+
