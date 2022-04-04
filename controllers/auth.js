@@ -218,23 +218,11 @@ export const getUser = async (req,res) =>{
 export const getAllUsers = async (req,res) =>{
 
 
-
-    
     try {
-        let foundUsers = await User.find({
-            
-        })
-
+        
+        /**function to communicate with blockchain */
         getAccessors(req,res)
-        // return res.json({
-        //     success:true,
-        //     message:'user found',
-        //     data:{
-        //         users:foundUsers
-        //     }
-        // })
-
-
+        
     } catch (error) {
         return res.json({
             success:false,

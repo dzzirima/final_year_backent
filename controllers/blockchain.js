@@ -51,3 +51,14 @@ export const getAccessors = async (req,res) =>{
 }
 
 
+/**function to create record  */
+export const createPrescription = async (req,res) =>{
+  try {
+    let newPrescription = await prescriptionContract.createUser()
+    
+  } catch (error) {
+    
+  }
+}
+
+
