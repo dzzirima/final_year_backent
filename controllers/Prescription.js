@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 import { get_signed_token } from "../util/getsingedtoken.js";
 import { sendEmail } from "../util/sendEmail.js";
 import { ROLES } from "../util/Roles.js";
+import { createPrescription } from "./blockchain.js";
 
 export const createRecord = async (req, res) => {
   const {
@@ -14,53 +15,17 @@ export const createRecord = async (req, res) => {
     drugDescription,
     drugImageURL,
   } = req.body;
-
-  console.log(patientId);
-
   try {
-    let foundUser = await User.findOne({
-      _id: patientId,
-    });
-
-    if (!foundUser) {
-      return res.json({
-        success: false,
-        message: "No user found",
-      });
-    }
+     await createPrescription(req,res)
   } catch (error) {
-    return res.json({
-      success: false,
-      message: `${error.message}`,
-    });
+    res.status(500).json({
+      success:false,
+      message:error.message
+    })
+    
   }
 
-  try {
-    const record = await Prescription.create({
-      recordId: nanoid(10),
-      patientId,
-      phamasistId,
-      doctorId,
-      quantityPrescribed,
-      drugDescription,
-      drugImageURL,
-    });
-    res
-      .json({
-        success: "true",
-        message: "Record  was created successfully !!!",
-      })
-      .status(200);
-  } catch (error) {
-    console.log(error);
-    res
-      .json({
-        success: "false",
-        message: error.message,
-      })
-      .status(201);
-    return;
-  }
+
 };
 
 export const updateRecord = async (req, res) => {

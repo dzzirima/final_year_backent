@@ -9,13 +9,15 @@ const medAcessABI = require("../contracts_abi/prescription.json");
 
 import { ethers } from "ethers";
 
-
 let provider = new ethers.providers.JsonRpcProvider();
-const signer = provider.getSigner(1)
-let abi= medAcessABI.abi;
+const signer = provider.getSigner();
+let abi = medAcessABI.abi;
 
-
-let prescriptionContract = new ethers.Contract("0x5FbDB2315678afecb367f032d93F642f64180aa3",abi,provider)
+let prescriptionContract = new ethers.Contract(
+  "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  abi,
+  provider
+);
 
 export const testConnection = async () => {
   // Look up the current block number
@@ -24,7 +26,7 @@ export const testConnection = async () => {
     let balance = await provider.getBlockNumber();
     if (balance >= 0) {
       console.log("Blockchain is running ....");
-      console.log("signer :",signer)
+      console.log("signer :", signer);
       return true;
     }
   } catch (error) {
@@ -33,32 +35,48 @@ export const testConnection = async () => {
   }
 };
 
-export const getAccessors = async (req,res) =>{
+export const getAccessors = async (req, res) => {
   try {
-    let accessors = await  prescriptionContract.getAccessors()
+    let accessors = await prescriptionContract.getAccessors();
     res.status(200).json({
-      success:true,
-      accessors:accessors,
-    })
+      success: true,
+      accessors: accessors,
+    });
   } catch (error) {
-
     res.status(501).json({
-      success:false,
-      message:error.message
-    })
-    console.log(error.message)
+      success: false,
+      message: error.message,
+    });
+    console.log(error.message);
   }
-}
+};
 
-
-/**function to create record  */
-export const createPrescription = async (req,res) =>{
+/**function to change the  state off blockchain needs a signer to be charged by the network
+ * 
+  */
+export const createPrescription = async (req, res) => {
+  const {
+    recordId,
+    patientId,
+    doctorId,
+    quantityPrescribed,
+    drugDescription,
+  } = req.body;
   try {
-    let newPrescription = await prescriptionContract.createUser()
-    
+    let prescriptionContractWithSigner = prescriptionContract.connect(signer)
+    let newPrescription = await prescriptionContractWithSigner.createUser(
+      patientId,doctorId,recordId ,drugDescription,quantityPrescribed 
+      );
+    res.status(200).json({
+      success: true,
+      message: "The Prescription was created succefully",
+    });
   } catch (error) {
+    console.log(error.message);
+    res.json({
+      success: false,
+      message: error.message,
+    });
     
   }
-}
-
-
+};
