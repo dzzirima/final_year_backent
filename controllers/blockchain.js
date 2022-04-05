@@ -201,3 +201,28 @@ export const grantAccessBlockchain = async (req,res) =>{
     })
   }
 }
+
+
+export const revokeAccessBlockchain = async (req,res) =>{
+
+  let {userId,accessorToBeRemoved} = req.body
+  try {
+    /**params , 1 userId , 2 ..accessoer */
+    let newlyRemoveUser = await prescriptionContractWithSigner.removeAccessor(userId,accessorToBeRemoved)
+
+    if(newlyRemoveUser.hash){
+      return res.status(200).json({
+        success:true,
+        hash:newlyRemoveUser.hash
+      })
+    }
+    
+  } catch (error) {
+    return res.status(302).json({
+      success:false,
+      message:error.message
+    })
+  }
+}
+
+
