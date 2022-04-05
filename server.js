@@ -9,6 +9,7 @@ const app = express()
 
 import auth_routes from "./routes/auth.js"
 import record_routes from "./routes/prescription.js"
+import accessRoutes from "./routes/accessors.js"
 
 //connect to database
 dbConnect()
@@ -20,6 +21,8 @@ app.use(express.urlencoded({extended:true}));
 //all the middles now
 app.use('/api/v1/auth',auth_routes)
 app.use('/api/v1/records',record_routes)
+app.use('/api/v1/accessors',accessRoutes)
+
 
 
 app.get('/',(req,res) =>{

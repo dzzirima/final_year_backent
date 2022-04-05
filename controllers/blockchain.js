@@ -8,6 +8,7 @@ const require = createRequire(import.meta.url);
 const medAcessABI = require("../contracts_abi/prescription.json");
 
 import { ethers } from "ethers";
+import { nanoid } from "nanoid";
 
 let provider = new ethers.providers.JsonRpcProvider(); //provider gives uss read only on the blockchain
 let contractAddress = "0x610178dA211FEF7D417bC0e6FeD39F05609AD788"
@@ -114,12 +115,11 @@ try {
 }
 }
 
-
-
 /**function to  create a prescription  */
 export const createPrescription = async (req, res) => {
-  const {
-    recordId,
+
+  let recordId = nanoid(10);
+  let  {
     patientId,
     doctorId,
     quantityPrescribed,
@@ -127,8 +127,8 @@ export const createPrescription = async (req, res) => {
   } = req.body;
   try {
     
-    let newPrescription = await prescriptionContractWithSigner.createUser(
-      patientId,doctorId,recordId ,drugDescription,quantityPrescribed 
+    let newPrescription = await prescriptionContractWithSigner.createRecord(
+      recordId,  patientId,doctorId,quantityPrescribed ,drugDescription
       );
     res.status(200).json({
       success: true,
@@ -146,3 +146,58 @@ export const createPrescription = async (req, res) => {
   }
 };
 
+
+/**function to get all user records */
+
+export const  getAllUserRecordsFromBlockchain = async (req,res) =>{
+  try {
+    
+    let {userId, requestor} = req.body
+    /**Do all the checking here  */
+    let userRecords = await prescriptionContract.getUserRecords(userId,requestor)
+
+  let cleanedRecords = userRecords.map((element) =>{
+
+    return{
+      ...element
+    }
+  })
+    
+    return res.status(200).json({
+      success:true,
+      data:cleanedRecords
+    })
+
+  } catch (error) {
+
+    return res.status(302).json({
+      success:false,
+      message:error.message
+    })
+    
+  }
+}
+
+/**................................................accesss related funtions...................................... */
+
+export const grantAccessBlockchain = async (req,res) =>{
+
+  let {userId,accessor} = req.body
+  try {
+    /**params , 1 userId , 2 ..accessoer */
+    let newlyGrantedUser = await prescriptionContractWithSigner.addAccessors(userId,accessor)
+
+    if(newlyGrantedUser.hash){
+      return res.status(200).json({
+        success:true,
+        hash:newlyGrantedUser.hash
+      })
+    }
+    
+  } catch (error) {
+    return res.status(302).json({
+      success:false,
+      message:error.message
+    })
+  }
+}

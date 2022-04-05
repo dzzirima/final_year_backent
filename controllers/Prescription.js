@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { get_signed_token } from "../util/getsingedtoken.js";
 import { sendEmail } from "../util/sendEmail.js";
 import { ROLES } from "../util/Roles.js";
-import {  createUser } from "./blockchain.js";
+import {  createPrescription, createUser, getAllUserRecordsFromBlockchain } from "./blockchain.js";
 
 export const createRecord = async (req, res) => {
   const {
@@ -13,18 +13,33 @@ export const createRecord = async (req, res) => {
     doctorId,
     quantityPrescribed,
     drugDescription,
-    drugImageURL,
+  
   } = req.body;
+
+  /**checking if patientId and doctor is  correct
+   * TO DO
+   * 1 check if the doctor or patient is registered
+   * 2.check if the doctor is approved
+   */
+
   try {
-     await createUser(req,res)
+    if(patientId.length != 10 || doctorId.length != 10 ){
+      return res.status(500).json({
+        success:false,
+        message:"Please Provide correct patientId and doctorId"
+      })
+    }
+  
+    await  createPrescription(req, res)
+    
   } catch (error) {
-    res.status(500).json({
+    return res.status(301).json({
       success:false,
       message:error.message
     })
     
   }
-
+  
 
 };
 
@@ -193,33 +208,19 @@ export const getAllUserRecords = async (req, res) => {
    * N.B checking is done role based
    *
    */
-  let isOwner = req.user.role === ROLES.PATIENT ? true : false;
-  let foundRecords;
 
   try {
-    if (isOwner) {
-      foundRecords = await Prescription.find({
-        patientId: req.user._id.toString(),
-      });
-    } else {
-      foundRecords = await Prescription.find({
-        accessors: req.user._id.toString(),
-      });
-    }
-    return res.json({
-      success: true,
-      message: "user records found",
-      data: {
-        length: foundRecords.length,
-        records: foundRecords,
-      },
-    });
+    await getAllUserRecordsFromBlockchain(req,res)
   } catch (error) {
-    return res.json({
-      success: false,
-      message: `${error.message}`,
-    });
+    console.log(error.message)
+    return res.status(500).json({
+      success:false,
+      message:error.message
+    })
+    
   }
+
+    
 };
 
 export const permisions = async (req, res) => {
