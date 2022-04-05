@@ -2,6 +2,8 @@ import mongoose from 'mongoose'
 
 
 const UserSchema = new mongoose.Schema({
+
+    userId:String,
     firstname:{
         type:String,
         required:[true,"Please provide the username"]
@@ -27,13 +29,6 @@ const UserSchema = new mongoose.Schema({
     role:String,
 
     identityProofUrl:String,
-
-    joinDate:{
-        type :Date,
-        default: new Date()
-
-    },
-
     nextOfKin:{},
 
     passwordResetToken:{
@@ -43,7 +38,7 @@ const UserSchema = new mongoose.Schema({
 
 
     profileImageURL:String
-});
+},{timestamps:true});
 
 const User = mongoose.model("User",UserSchema)
 

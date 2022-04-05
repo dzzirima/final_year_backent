@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { get_signed_token } from "../util/getsingedtoken.js";
 import { sendEmail } from "../util/sendEmail.js";
 import { ROLES } from "../util/Roles.js";
-import { createPrescription } from "./blockchain.js";
+import {  createUser } from "./blockchain.js";
 
 export const createRecord = async (req, res) => {
   const {
@@ -16,7 +16,7 @@ export const createRecord = async (req, res) => {
     drugImageURL,
   } = req.body;
   try {
-     await createPrescription(req,res)
+     await createUser(req,res)
   } catch (error) {
     res.status(500).json({
       success:false,
