@@ -9,9 +9,10 @@ const medAcessABI = require("../contracts_abi/prescription.json");
 
 import { ethers } from "ethers";
 import { nanoid } from "nanoid";
+import internal from "stream";
 
 let provider = new ethers.providers.JsonRpcProvider(); //provider gives uss read only on the blockchain
-let contractAddress = "0x610178dA211FEF7D417bC0e6FeD39F05609AD788";
+let contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 let abi = medAcessABI.abi;
 
@@ -57,13 +58,15 @@ export const getAccessors = async (req, res) => {
  */
 // function to create a new user
 export const createUser = async (userId, req, res) => {
-  const { firstname, lastname, role } = req.body;
+  const { firstname, lastname, role , email } = req.body;
   try {
     let newUser = await prescriptionContractWithSigner.createUser(
       userId,
+      role,
+      email,
       firstname,
       lastname,
-      role
+     
     );
 
     console.log(newUser.hash);
@@ -100,8 +103,12 @@ export const getAllUsersFromBlockChain = async (req, res) => {
 
 /**function to  create a prescription  */
 export const createPrescription = async (req, res) => {
+
+
   let recordId = nanoid(10);
   let { patientId, doctorId, quantityPrescribed, drugDescription } = req.body;
+
+  
   try {
     let newPrescription = await prescriptionContractWithSigner.createRecord(
       recordId,
@@ -116,7 +123,7 @@ export const createPrescription = async (req, res) => {
       hash: newPrescription.hash,
     });
   } catch (error) {
-    console.log(error.message);
+    console.log(error)
     res.json({
       success: false,
       message: error.message,

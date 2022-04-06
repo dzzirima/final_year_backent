@@ -9,18 +9,18 @@ import {  createPrescription, createUser, getAllUserRecordsFromBlockchain } from
 export const createRecord = async (req, res) => {
   const {
     patientId,
-    phamasistId,
-    doctorId,
-    quantityPrescribed,
-    drugDescription,
-  
+    doctorId
+ 
   } = req.body;
+
+
 
   /**checking if patientId and doctor is  correct
    * TO DO
    * 1 check if the doctor or patient is registered
    * 2.check if the doctor is approved
    */
+
 
   try {
     if(patientId.length != 10 || doctorId.length != 10 ){
@@ -29,10 +29,13 @@ export const createRecord = async (req, res) => {
         message:"Please Provide correct patientId and doctorId"
       })
     }
+
+   
   
     await  createPrescription(req, res)
     
   } catch (error) {
+    console.log(error)
     return res.status(301).json({
       success:false,
       message:error.message
@@ -208,6 +211,7 @@ export const getAllUserRecords = async (req, res) => {
    * N.B checking is done role based
    *
    */
+ 
 
   try {
     await getAllUserRecordsFromBlockchain(req,res)
