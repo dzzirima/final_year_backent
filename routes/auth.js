@@ -15,7 +15,7 @@ Router.route('/forgotPassword').post(forgetPassword)
 Router.route('/resetPassword').post(resetPassword)
 
 // only the admin can do this
-Router.route('/getAllUsers').get(verify_user, getAllUsers)
+Router.route('/getAllUsers').get(getAllUsers)
 Router.route('/delete').delete(verify_user,authRole(ROLES.ADMIN), deleteUser)
 
 

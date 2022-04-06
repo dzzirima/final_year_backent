@@ -8,18 +8,18 @@ import { ROLES } from '../util/Roles.js'
 
 
 Router.route('/createRecord').post(createRecord)
-Router.route('/updateRecord').post( verify_user,updateRecord)
+Router.route('/updateRecord').post( updateRecord)
 
 /**The patient should delete their records */
-Router.route('/deleteRecord').delete(verify_user, deleteRecord)
-Router.route('/getRecord').get(verify_user, getRecord)
+Router.route('/deleteRecord').delete( deleteRecord)
+Router.route('/getRecord').get( getRecord)
 
 /**A user or a doctor can get the  records  */
-Router.route('/getAllUserRecords').get(verify_user, getAllUserRecords)
+Router.route('/getAllUserRecords').post( getAllUserRecords)
 
 
 /** permision to the records */
-Router.route('/permisions').post(verify_user,permisions)
+Router.route('/permisions').post(permisions)
 
 
 
