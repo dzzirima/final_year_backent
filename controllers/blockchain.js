@@ -12,7 +12,7 @@ import { nanoid } from "nanoid";
 import internal from "stream";
 
 let provider = new ethers.providers.JsonRpcProvider(); //provider gives uss read only on the blockchain
-let contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+let contractAddress = "0xe145C8024df3CF170ddA8b900a8943CB19d02C17";
 
 let abi = medAcessABI.abi;
 
