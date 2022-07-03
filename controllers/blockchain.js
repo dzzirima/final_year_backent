@@ -3,6 +3,8 @@
  */
 
 //importing json
+import dotenv from 'dotenv'
+dotenv.config()
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const medAcessABI = require("../contracts_abi/prescription.json");
@@ -11,15 +13,18 @@ import { ethers } from "ethers";
 import { nanoid } from "nanoid";
 import internal from "stream";
 
-let provider = new ethers.providers.JsonRpcProvider(); //provider gives uss read only on the blockchain
-let contractAddress = "0xe145C8024df3CF170ddA8b900a8943CB19d02C17";
+let provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_API_KEY_URL); //provider gives uss read only on the blockchain
+let contractAddress = "0x4d7990563cbe1C56887Abb43D63322C73C052872";
 
 let abi = medAcessABI.abi;
 
 let prescriptionContract = new ethers.Contract(contractAddress, abi, provider);
 
-const signer = provider.getSigner();
-let prescriptionContractWithSigner = prescriptionContract.connect(signer); // writting to blockchian needs a signer
+// const signer = provider.getSigner();
+
+const signer2 = new  ethers.Wallet(process.env.RINKEBY_PRIVATE_KEY,provider)
+
+let prescriptionContractWithSigner = prescriptionContract.connect(signer2); // writting to blockchian needs a signer
 
 export const testConnection = async () => {
   // Look up the current block number
@@ -28,7 +33,7 @@ export const testConnection = async () => {
     let balance = await provider.getBlockNumber();
     if (balance >= 0) {
       console.log("Blockchain is running ....");
-      console.log("signer :", signer);
+      console.log("signer :", signer2);
       return true;
     }
   } catch (error) {
