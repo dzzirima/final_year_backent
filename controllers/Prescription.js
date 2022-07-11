@@ -1,4 +1,4 @@
-import Prescription from "../models/Prescription.js";
+import Record from "../models/Record.js";
 import User from "../models/User.js";
 import { nanoid } from "nanoid";
 import { get_signed_token } from "../util/getsingedtoken.js";
@@ -7,47 +7,37 @@ import { ROLES } from "../util/Roles.js";
 
 export const createRecord = async (req, res) => {
   const {
-    patientId,
-    phamasistId,
-    doctorId,
-    quantityPrescribed,
-    drugDescription,
-    drugImageURL,
+    staffId,
+    bcg,
+    covid,
+    description,
+    dpt,
+    dt,
+    hbv,
+    height,
+    measles,
+    polio,
+    weight,
   } = req.body;
 
-  console.log(patientId);
-
   try {
-    let foundUser = await User.findOne({
-      _id: patientId,
-    });
-
-    if (!foundUser) {
-      return res.json({
-        success: false,
-        message: "No user found",
-      });
-    }
-  } catch (error) {
-    return res.json({
-      success: false,
-      message: `${error.message}`,
-    });
-  }
-
-  try {
-    const record = await Prescription.create({
-      recordId: nanoid(10),
-      patientId,
-      phamasistId,
-      doctorId,
-      quantityPrescribed,
-      drugDescription,
-      drugImageURL,
+    const record = await Record.create({
+      staffId,
+      bcg,
+      covid,
+      description,
+      dpt,
+      dt,
+      hbv,
+      height,
+      measles,
+      polio,
+      weight,
+    
     });
     res
       .json({
-        success: "true",
+        success: true,
         message: "Record  was created successfully !!!",
       })
       .status(200);
@@ -81,7 +71,7 @@ export const updateRecord = async (req, res) => {
   } = req.body;
 
   try {
-    let foundRecord = await Prescription.findOne({ recordId });
+    let foundRecord = await Record.findOne({ recordId });
     /**check if the prescriber currently has access to record */
     canUpDate =
       foundRecord.accessors.indexOf(req.user._id.toString()) >= 0
@@ -89,7 +79,7 @@ export const updateRecord = async (req, res) => {
         : false;
 
     if (canUpDate) {
-      await Prescription.findOneAndUpdate(
+      await Record.findOneAndUpdate(
         {recordId },
         {
           $set: {
@@ -135,12 +125,12 @@ export const deleteRecord = async (req, res) => {
   /**check if the user is the owner of the record */
 
   try {
-    let foundRecord = await Prescription.findById(_id);
+    let foundRecord = await Record.findById(_id);
     canDelete =
       foundRecord.patientId === req.user._id.toString() ? true : false;
 
     if (canDelete) {
-      await Prescription.findByIdAndDelete({ _id });
+      await Record.findByIdAndDelete({ _id });
       return res.json({
         success: true,
         message: "Record was deleted successfully",
@@ -180,7 +170,7 @@ export const getRecord = async (req, res) => {
     });
   }
   try {
-    let foundRecord = await Prescription.findOne({ recordId: recordId });
+    let foundRecord = await Record.findOne({ recordId: recordId });
 
     if (!foundRecord)
       res.status(404).json({
@@ -233,11 +223,11 @@ export const getAllUserRecords = async (req, res) => {
 
   try {
     if (isOwner) {
-      foundRecords = await Prescription.find({
+      foundRecords = await Record.find({
         patientId: req.user._id.toString(),
       });
     } else {
-      foundRecords = await Prescription.find({
+      foundRecords = await Record.find({
         accessors: req.user._id.toString(),
       });
     }
@@ -270,7 +260,7 @@ export const permisions = async (req, res) => {
   }
 
   try {
-    let foundRecord = await Prescription.findOne({ recordId: recordId });
+    let foundRecord = await Record.findOne({ recordId: recordId });
 
     /**check if there is prescriber with that id */
     try {
@@ -296,7 +286,7 @@ export const permisions = async (req, res) => {
     /**if revoke is set to true , then remove the prescribers id from the list */
 
     if (revoke) {
-      let updatedRecord = await Prescription.updateOne(
+      let updatedRecord = await Record.updateOne(
         { recordId: recordId },
         { $pull: { accessors: prescriberId } }
       );
@@ -308,7 +298,7 @@ export const permisions = async (req, res) => {
     }
 
     /**Add the doctors or phamacist id into an array */
-    let updatedRecord = await Prescription.updateOne(
+    let updatedRecord = await Record.updateOne(
       { recordId: recordId },
       { $addToSet: { accessors: prescriberId } }
     );

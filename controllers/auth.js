@@ -40,7 +40,7 @@ export const register = async (req, res) => {
       profileImageURL
     });
     res.json({
-        "success":"true",
+        "success":true,
         message:"User created successfully",
         data:{
             "token": await get_signed_token(user)
@@ -61,9 +61,10 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req,res) =>{
+
     
     const {email, password} = req.body
-    
+   
     if(!email && !password){
         res.json({
             "success":"false",
@@ -74,6 +75,8 @@ export const login = async (req,res) =>{
     try {
         //1 check if the useremail  is in the database
         const user =  await User.findOne({email}).select("+password");
+
+       
 
         // check if the user exist
         if(!user){
