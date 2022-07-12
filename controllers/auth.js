@@ -7,6 +7,8 @@ export const register = async (req, res) => {
   const { 
       firstname,
        lastname, 
+       dob,
+        gender,
        email, 
        password,
        phone,
@@ -32,6 +34,8 @@ export const register = async (req, res) => {
       firstname,
       lastname,
       email,
+      dob,
+        gender,
       password,
       phone,
       address,
@@ -125,6 +129,7 @@ export const updateUser = async (req,res) =>{
     const { _id ,
         firstName,
         lastName,
+        
         email,
         password,
         phone,

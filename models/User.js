@@ -1,50 +1,49 @@
-import mongoose from 'mongoose'
-
+import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-    firstname:{
-        type:String,
-        required:[true,"Please provide the username"]
-    },
-    lastname:{
-        type:String,
-        required:[true,"Please provide the username"]
-    },
-    email:{
-        type:String,
-        required:[true, "Please provide an email"],
-        unique:true
-    },
-    phone:String,
-    password:{
-        type:String,
-        required:[true,"Please add  a password"],
-        minlength:6,
-        // when we query  for the user do we want to return the password 
-        select:false
-    },
-    address:String,
-    role:String,
+  firstname: {
+    type: String,
+    required: [true, "Please provide the username"],
+  },
+  lastname: {
+    type: String,
+    required: [true, "Please provide the username"],
+  },
+  email: {
+    type: String,
+    required: [true, "Please provide an email"],
+    unique: true,
+  },
+  phone: String,
+  password: {
+    type: String,
+    required: [true, "Please add  a password"],
+    minlength: 6,
+    // when we query  for the user do we want to return the password
+    select: false,
+  },
+  address: String,
+  role: String,
+  dob: String,
+  gender: String,
 
-    identityProofUrl:String,
+  identityProofUrl: String,
 
-    joinDate:{
-        type :Date,
-        default: new Date()
+  joinDate: {
+    type: Date,
+    default: new Date(),
+  },
 
-    },
+  nextOfKin: {},
 
-    nextOfKin:{},
+  passwordResetToken: {
+    type: String,
+    expireAfterSeconds: 20,
+  },
 
-    passwordResetToken:{
-        type:String,
-        expireAfterSeconds:20
-    },
-
-
-    profileImageURL:String
+  profileImageURL: String,
 });
 
-const User = mongoose.model("User",UserSchema)
+const User = mongoose.model("User", UserSchema);
 
-export default User
+export default User;

@@ -7,7 +7,7 @@ import { ROLES } from "../util/Roles.js";
 
 export const createRecord = async (req, res) => {
   const {
-    staffId,
+    patientId,
     bcg,
     covid,
     description,
@@ -22,7 +22,7 @@ export const createRecord = async (req, res) => {
 
   try {
     const record = await Record.create({
-      staffId,
+      patientId,
       bcg,
       covid,
       description,
@@ -218,14 +218,15 @@ export const getAllUserRecords = async (req, res) => {
    * N.B checking is done role based
    *
    */
-  let isOwner = req.user.role === ROLES.PATIENT ? true : false;
-  let foundRecords;
+ 
+let foundRecords
+
 
   try {
-    if (isOwner) {
+    if (true) {
       foundRecords = await Record.find({
-        patientId: req.user._id.toString(),
-      });
+        patientId: req.body.requestor
+      })
     } else {
       foundRecords = await Record.find({
         accessors: req.user._id.toString(),
