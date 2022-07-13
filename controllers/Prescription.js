@@ -6,7 +6,11 @@ import { sendEmail } from "../util/sendEmail.js";
 import { ROLES } from "../util/Roles.js";
 
 export const createRecord = async (req, res) => {
+
+ 
+
   const {
+    doctorId,
     patientId,
     bcg,
     covid,
@@ -22,6 +26,7 @@ export const createRecord = async (req, res) => {
 
   try {
     const record = await Record.create({
+      doctorId,
       patientId,
       bcg,
       covid,

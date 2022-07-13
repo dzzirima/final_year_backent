@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const RecordSchema = new mongoose.Schema(
   {
     patientId:String,
+    doctorId:String,
     bcg: String,
     covid: String,
     bcg: String,
